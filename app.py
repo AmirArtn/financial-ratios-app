@@ -42,6 +42,7 @@ ratios = {
     "Return on equity (%)":           pct(net_income, shareholder_equity),
     "Mark‑up margin (%)":             pct(gross_profit, cogs),
     "Current ratio":                  round(current_assets / current_liabilities, 2) if current_liabilities else None,
+    "Debt to equity ratio":           round(total_liabilities / shareholder_equity, 3),
 }
 
 
@@ -61,10 +62,11 @@ categories = {
     "Net income margin (%)":       "Profitability",
     "R&D margin (%)":              "Profitability",
     "COGS margin (%)":             "Efficiency",
-    "Return on assets (%)":        "Performance",
+    "Return on assets (%)":        "Performance ",
     "Return on equity (%)":        "Performance",
     "Mark‑up margin (%)":          "Pricing",
     "Current ratio":               "Liquidity",
+    "Debt to equity ratio":        "Solvency",
     # …add more mappings as you like…
 }
 
@@ -73,3 +75,42 @@ df["Category"] = df["Ratio"].map(categories).fillna("Other")
 # 3) Display it in Streamlit
 st.subheader("Calculated Ratios")
 st.dataframe(df)
+
+st.title("Financial Ratios Calculator")
+
+# 1) Show category explanations
+with st.expander("📖 Ratio Categories Explained", expanded=True):
+    st.markdown("""
+    **Profitability**  
+    Measures a company’s ability to generate earnings relative to its expenses and other costs.  
+    - *Gross profit margin*: (Revenue – COGS) ÷ Revenue  
+    - *Net income margin*: Net Income ÷ Revenue  
+
+    **Liquidity**  
+    Indicates whether the firm can meet its short‑term obligations.  
+    - *Current ratio*: Current Assets ÷ Current Liabilities  
+
+    **Solvency**  
+    Reflects long‑term financial stability—ability to cover all debts over time.  
+    - *Debt‑to‑equity ratio*: Total Liabilities ÷ Shareholders’ Equity  
+
+    **Efficiency**  
+    Shows how well a company uses its assets and controls its costs.  
+    - *COGS margin*: COGS ÷ Revenue  
+    - *Asset turnover*: Revenue ÷ Total Assets  
+
+    **Valuation**  
+    How the market prices the company relative to fundamentals.  
+    - *P/E ratio*: Share Price ÷ Earnings per Share  
+    - *EV/EBITDA*: Enterprise Value ÷ EBITDA  
+    """)
+
+# … your st.number_input() calls …
+# … your ratio calculations …
+
+# 2) Display the labeled table
+df = pd.DataFrame(list(ratios.items()), columns=["Ratio","Value"])
+df["Category"] = df["Ratio"].map(categories)
+st.subheader("Your Calculated Ratios")
+st.dataframe(df)
+
