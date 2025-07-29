@@ -57,3 +57,11 @@ for name, val in ratios.items():
         st.warning(f"{name}: cannot compute (division by zero)")
     else:
         st.write(f"**{name}:** {val}")
+
+
+st.download_button(
+    label="Download results as CSV",
+    data=df.to_csv(index=False),
+    file_name="ratios.csv",
+    mime="text/csv"
+)
