@@ -111,9 +111,4 @@ with st.expander("📖 Ratio Categories Explained", expanded=True):
 # … your st.number_input() calls …
 # … your ratio calculations …
 
-# 2) Display the labeled table
-df = pd.DataFrame(list(ratios.items()), columns=["Ratio","Value"])
-df["Category"] = df["Ratio"].map(categories)
-st.subheader("Your Calculated Ratios")
-st.dataframe(df)
 
