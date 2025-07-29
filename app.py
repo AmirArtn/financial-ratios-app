@@ -42,7 +42,8 @@ ratios = {
     "Return on equity (%)":           pct(net_income, shareholder_equity),
     "Mark‑up margin (%)":             pct(gross_profit, cogs),
     "Current ratio":                  round(current_assets / current_liabilities, 2) if current_liabilities else None,
-    "Debt to equity ratio":           round(total_liabilities / shareholder_equity, 3),
+    "Debt to equity ratio": round(total_liabilities / shareholder_equity, 3),
+
 }
 
 
