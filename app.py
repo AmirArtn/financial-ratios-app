@@ -54,10 +54,7 @@ df = pd.DataFrame(
 )
 
 # 2) (Optional) Add a “Category” column for high‑level classification
-categories = {streamlit
-pandas
-openpyxl
-
+categories = {
     "Gross profit margin (%)":     "Profitability",
     "Operating profit margin (%)": "Profitability",
     "Pretax margin (%)":           "Profitability",
