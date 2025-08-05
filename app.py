@@ -179,13 +179,18 @@ with st.expander("📖 competitive and durable Explained", expanded=False):
 st.write("Gross Profit margin of 20%, and less = Fierce competitive industry with no market power")
 st.write("Gross Profit Margin below or equal 40% = Competitive industry with market power")
 
+# 1) Compute gross margin (or None if revenue==0)
 gross_margin_pct = round((gross_profit / revenue) * 100, 2) if revenue else None
-is_low_margin = (gross_margin_pct is not None) and (gross_margin_pct < 20)
-is_high_margin = (gross_margin_pct is not None) and (gross_margin_pct >= 21)
 
+# 2) Boolean flags
+is_low_margin  = gross_margin_pct is not None and gross_margin_pct <= 40
+is_high_margin = gross_margin_pct is not None and gross_margin_pct >  40
+
+# 3) Build your safe label
+label = f"{gross_margin_pct:.2f}%" if gross_margin_pct is not None else "N/A"
+
+# 4) Show it in a two-column layout
 col1, col2 = st.columns([3,1])
-col1.metric("Gross Profit Margin (%)", f"{gross_margin_pct:.2f}%")
-# a read-only box on the right
-col2.checkbox("No market power ", value=is_low_margin, disabled=True)
-col2.checkbox("Market power ", value=is_high_margin, disabled=True)
-
+col1.metric("Gross Profit Margin (%)", label)        # <-- only use 'label'
+col2.checkbox("No Market Power (≤40%)",   value=is_low_margin,  disabled=True)
+col2.checkbox("Market Power (>40%)", value=is_high_margin, disabled=True)
