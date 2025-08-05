@@ -112,7 +112,7 @@ df["Category"] = df["Ratio"].map(categories).fillna("Other")
 st.subheader("Calculated Ratios")
 st.dataframe(df)
 
-st.title("Financial Ratios Info")
+st.subheader("Financial Ratios Info")
 
 # 1) Show category explanations
 with st.expander("📖 Ratio Categories Explained", expanded=False):
