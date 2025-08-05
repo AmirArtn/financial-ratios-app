@@ -41,12 +41,15 @@ market_price    = st.number_input("Market price",  format="%.2f")
 
 st.markdown("---")
 st.header ("Statements of Cashflow")
+st.write("Don't use negative sign, it will mess up the calulation")
 net_cash_operating  = st.number_input("Net cash from operating activities",     format="%.2f")
 depreciation  = st.number_input("Depreciation of property & equipment",     format="%.2f")
-net_cash_investing  = st.number_input("Net cash from investing activities",     format="%.2f")
-net_cash_financing  = st.number_input("Net cash from financing activities",     format="%.2f")
-cash_begin = st.number_input("Cash and cash equivalents at beginning of period",     format="%.2f")
-cash_ending = st.number_input("Cash and cash equivalents at end of period",     format="%.2f")
+capital_expenditure  = st.number_input("Purchases of property and equipment",     format="%.2f")
+sale_asset  = st.number_input("Sales of property and equipment",     format="%.2f")
+acquisitions  = st.number_input("Acquisitions, net of cash acquired, and purchases of intangible assets",     format="%.2f")
+debt_raised = st.number_input("Debt raised through financing",     format="%.2f")
+debt_repaid = st.number_input("Debt repaid through financing",     format="%.2f")
+
 
 # ————————————————————————————————————————————————
 # 2) Compute your ratios
@@ -333,3 +336,34 @@ else:
 col1, col2 = st.columns(2)
 col1.metric("Runway (days)",  label_days)
 col2.metric("Runway (years)", label_years)
+
+st.subheader("Free Cash Flow to Equity")
+st.write("Amount of cash a company can pay out to its shareholders")
+
+# 1) Compute your two numbers
+#    (make sure net_cash_operating, capital_expenditure, sale_asset,
+#     acquisitions, debt_raised and debt_repaid are all defined above)
+fcfe_before_debt = (
+    net_cash_operating
+  - capital_expenditure
+  + sale_asset
+  - acquisitions
+)
+
+fcfe_with_debt = fcfe_before_debt + debt_raised - debt_repaid
+
+# 2) Build safe display labels
+if None in (net_cash_operating, capital_expenditure, sale_asset, acquisitions):
+    label1 = "N/A"
+else:
+    label1 = f"${fcfe_before_debt:,.2f}"
+
+if None in (fcfe_before_debt, debt_raised, debt_repaid):
+    label2 = "N/A"
+else:
+    label2 = f"${fcfe_with_debt:,.2f}"
+
+# 3) Show side-by-side metrics
+col1, col2 = st.columns(2)
+col1.metric("FCFE Before Debt", label1)
+col2.metric("FCFE With Debt",  label2)
