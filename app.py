@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-
-import os
 st.title("Basic Financial Ratios Calculator")
 st.write("Warning: Save page as PDF or else you will lose your data when you exit the website.")
 # ————————————————————————————————————————————————
