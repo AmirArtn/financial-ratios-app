@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from fpdf import FPDF
+
 
 import os
 st.title("Basic Financial Ratios Calculator")
