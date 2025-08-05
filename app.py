@@ -7,15 +7,16 @@ st.title("Basic Financial Ratios Calculator")
 # 1) Gather inputs with Streamlit widgets instead of input()
 # ————————————————————————————————————————————————
 
-st.header ("Income Statement")
+st.header ("Statements of Income")
 revenue          = st.number_input("Net revenue",             format="%.2f")
+cogs             = st.number_input("Cost of goods sold",      format="%.2f")
 gross_profit     = st.number_input("Gross profit",            format="%.2f")
+sga     = st.number_input("Selling,General & Admin",            format="%.2f")
+R_D              = st.number_input("R&D expenditure",         format="%.2f")
 operating_profit = st.number_input("Operating profit",        format="%.2f")
+interest_expense     = st.number_input("Interest expense",       format="%.2f")
 pretax_income    = st.number_input("Pretax income",           format="%.2f")
 net_income       = st.number_input("Net income",              format="%.2f")
-R_D              = st.number_input("R&D expenditure",         format="%.2f")
-cogs             = st.number_input("Cost of goods sold",      format="%.2f")
-interest_expense     = st.number_input("Interest expense",       format="%.2f")
 earnings_per_share   = st.number_input("Earnings per share",     format="%.2f")
 
 st.markdown("---")
@@ -37,6 +38,15 @@ inventory_begin   = st.number_input("Inventory begin",     format="%.2f")
 inventory_end   = st.number_input("Inventory end",     format="%.2f")
 market_price    = st.number_input("Market price",  format="%.2f")
 
+
+st.markdown("---")
+st.header ("Statements of Cashflow")
+net_cash_operating  = st.number_input("Net cash from operating activities",     format="%.2f")
+depreciation  = st.number_input("Depreciation of property & equipment",     format="%.2f")
+net_cash_investing  = st.number_input("Net cash from investing activities",     format="%.2f")
+net_cash_financing  = st.number_input("Net cash from financing activities",     format="%.2f")
+cash_begin = st.number_input("Cash and cash equivalents at beginning of period",     format="%.2f")
+cash_ending = st.number_input("Cash and cash equivalents at end of period",     format="%.2f")
 
 # ————————————————————————————————————————————————
 # 2) Compute your ratios
@@ -158,8 +168,8 @@ with st.expander("📖 Ratio Categories Explained", expanded=False):
 
 st.markdown("---")
 
-st.subheader ("How to see competitive and durable company")
-with st.expander("📖 competitive and durable Explained", expanded=False):
+st.subheader ("Peformance & Competitive Edge Analysis")
+with st.expander("📖 Competitive Edge Explained", expanded=False):
     st.markdown(""" Look for:
     - Long-term durable competitive advantage over competitors.
     - Consistently higher margin year to year = competitive advantage.
@@ -176,6 +186,23 @@ with st.expander("📖 competitive and durable Explained", expanded=False):
 
     """)
 
+st.subheader("Rate of Revenue to Net Earnings")
+st.write("Historical net earning of 20% or more on total revenue = Long-term competitive advantage")
+income_margin_pct = round((net_income / revenue) * 100, 2) if revenue else None
+is_low_income  = income_margin_pct  is not None and income_margin_pct  < 19
+is_high_income = income_margin_pct  is not None and income_margin_pct  >=  20
+
+label0 = f"{income_margin_pct:.2f}%" if income_margin_pct is not None else "N/A"
+
+col1, col2 = st.columns([3,1])
+col1.metric("Net Income Margin (%)", label0)        # <-- only use 'label'
+col2.checkbox("No long-term competitive edge (<20%)",   value=is_low_income,  disabled=True)
+col2.checkbox("Long-term competitive edge  (>=20%)", value=is_high_income, disabled=True)
+
+
+
+
+st.subheader("Gross Margin")
 st.write("Gross Profit margin of 20%, and less = Fierce competitive industry with no market power")
 st.write("Gross Profit Margin below or equal 40% = Competitive industry with market power")
 
@@ -183,8 +210,8 @@ st.write("Gross Profit Margin below or equal 40% = Competitive industry with mar
 gross_margin_pct = round((gross_profit / revenue) * 100, 2) if revenue else None
 
 # 2) Boolean flags
-is_low_margin  = gross_margin_pct is not None and gross_margin_pct <= 40
-is_high_margin = gross_margin_pct is not None and gross_margin_pct >  40
+is_low_margin  = gross_margin_pct is not None and gross_margin_pct < 29
+is_high_margin = gross_margin_pct is not None and gross_margin_pct >=  30
 
 # 3) Build your safe label
 label = f"{gross_margin_pct:.2f}%" if gross_margin_pct is not None else "N/A"
@@ -194,3 +221,115 @@ col1, col2 = st.columns([3,1])
 col1.metric("Gross Profit Margin (%)", label)        # <-- only use 'label'
 col2.checkbox("No Market Power (≤40%)",   value=is_low_margin,  disabled=True)
 col2.checkbox("Market Power (>40%)", value=is_high_margin, disabled=True)
+
+st.subheader("Selling,General & Admin Margin")
+st.write("SGA under 30% of Gross Profit = Fantastic")
+st.write("SGA above 30% of Gross Profit = Overpaying managers")
+SGA_margin_pct = round((sga / gross_profit) * 100, 2) if gross_profit else None
+
+is_low_sga  = SGA_margin_pct is not None and SGA_margin_pct <= 30
+is_high_sga = SGA_margin_pct is not None and SGA_margin_pct >  30
+
+label2 = f"{SGA_margin_pct:.2f}%" if SGA_margin_pct is not None else "N/A"
+
+col1, col2 = st.columns([3,1])
+col1.metric("Selling,General & Admin Margin (%) of Gross Profit", label2)        # <-- only use 'label'
+col2.checkbox("Healthy (≤30%)",   value=is_low_sga,  disabled=True)
+col2.checkbox("Unhealthy (>40%)", value=is_high_sga, disabled=True)
+
+st.subheader("Depreciation Margin")
+st.write("Depreciation under 10% = Competitive Company")
+
+depreciation_margin_pct = round((depreciation / gross_profit) * 100, 2) if gross_profit else None
+is_low_depreciation  = depreciation_margin_pct is not None and depreciation_margin_pct <= 10
+is_high_depreciation = depreciation_margin_pct is not None and depreciation_margin_pct >  10
+label3 = f"{depreciation_margin_pct:.2f}%" if depreciation_margin_pct is not None else "N/A"
+
+col1, col2 = st.columns([3,1])
+col1.metric("Depreciation margin (%) of Gross Profit", label3)        # <-- only use 'label'
+col2.checkbox("Competitive edge (≤10%)",   value=is_low_depreciation,  disabled=True)
+col2.checkbox("High depreciation cost (>40%)", value=is_high_depreciation, disabled=True)
+
+st.subheader("Per-Share Earnings")
+st.write("Shows consistency and upward trend = Competitive and durable ")
+
+pershare_earnings = round((net_income / shares_outstanding), 2) if shares_outstanding else None
+
+label4 = f"${pershare_earnings:.2f} per share" if pershare_earnings is not None else "N/A"
+
+col1, col2 = st.columns([3,1])
+col1.metric("Per-Share Earnings", label4) 
+
+st.markdown("---")
+
+st.subheader ("Valuation")
+with st.expander("Undervalued or Overvalued", expanded=False):
+    st.markdown(""" 
+    -  A company with durable competitive advantage will use earning power to finance operation, therefore maintain high level of equity and low total liabilities.
+    -  Companies without durability will show the opposite, use debt to finance operations, therefore have lower level of equity and high level of total liabilities.
+    -  Durable Competitive companies have return on equity of 30% and more or there is a compound effect of return on equity as it adds up year after year.
+    -  If a company shows negative equity and bad net income, it is a company heading to bankruptcy.
+    -  Goodwill indicates the business is acquisitioning other business, which in turn can be profitable, but in most cases it will not be.
+    -  If the company is failing and has no cash pile, that is a sinking ship no matter what management. 
+
+    """)
+
+
+st.subheader("Return on Equity Margin")
+st.write("Durable Competitive companies have return on equity of 30% and more.")
+
+equity_margin_pct = round((net_income / shareholder_equity) * 100, 2) if shareholder_equity else None
+
+is_low_equity  = equity_margin_pct is not None and equity_margin_pct < 30
+is_high_equity = equity_margin_pct is not None and equity_margin_pct >=  30
+
+label5 = f"{equity_margin_pct:.2f}%" if equity_margin_pct is not None else "N/A"
+
+col1, col2 = st.columns([3,1])
+col1.metric("Return on Equity", label5)        # <-- only use 'label'
+col2.checkbox("Nondurable (<30)",   value=is_low_equity,  disabled=True)
+col2.checkbox("Durable (>=30%)", value=is_high_equity, disabled=True)
+
+st.subheader("Basic Earning Power")
+st.write("Ability to self-finance R&D and Acquiring Long-Term Assets  ")
+
+earning_power = round((operating_profit/ total_assets), 2) if total_assets else None
+
+is_low_earning = earning_power is not None and earning_power < 0.10
+is_high_earning = earning_power is not None and earning_power >=  0.10
+
+label6 = f"${earning_power:.2f} per dollar" if earning_power is not None else "N/A"
+
+col1, col2 = st.columns([3,1])
+col1.metric("Earning Power", label6)
+col2.checkbox("No Earning Power (<$0.10)",   value=is_low_earning,  disabled=True)
+col2.checkbox("Earning Power (>=$0.10)", value=is_high_earning, disabled=True)
+
+st.subheader("Defensive Interval Ratio")
+st.write("How long will the firm last with only current assets?")
+
+# 1) Sum your annual operating expenses (SG&A + R&D)
+annual_op_expense = sga + R_D   # make sure sga and R_D are annual figures
+
+# 2) Guard against zero to avoid division-by-zero
+if annual_op_expense:
+    # 3) Compute daily expense
+    exp_per_day = annual_op_expense / 365
+
+    # 4) Runway in days
+    runway_days = current_assets / exp_per_day
+
+    # 5) Runway in years
+    runway_years = runway_days / 365
+
+    # 6) Format your labels
+    label_days  = f"{runway_days:.0f} days"
+    label_years = f"{runway_years:.2f} years"
+else:
+    runway_days = runway_years = None
+    label_days = label_years = "N/A"
+
+# 7) Display side by side
+col1, col2 = st.columns(2)
+col1.metric("Runway (days)",  label_days)
+col2.metric("Runway (years)", label_years)
