@@ -371,29 +371,3 @@ col1.metric("FCFE Before Debt", label1)
 col2.metric("FCFE With Debt",  label2)
 
 
-st.markdown(
-    """
-    <style>
-      /* Position the button fixed at bottom-right */
-      .print-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #4CAF50;
-        color: white;
-        padding: 0.5em 1em;
-        border: none;
-        border-radius: 4px;
-        font-size: 1rem;
-        cursor: pointer;
-        z-index: 9999;
-      }
-      /* Hide the button when actually printing */
-      @media print {
-        .print-button { display: none; }
-      }
-    </style>
-    <button class="print-button" onclick="window.print()">🖨️ Save Page as PDF</button>
-    """,
-    unsafe_allow_html=True,
-)
