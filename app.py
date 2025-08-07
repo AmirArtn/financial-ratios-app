@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 
+
 st.title("Basic Financial Ratios Calculator")
 st.write("Warning: Save page as PDF or else you will lose your data when you exit the website.")
+st.write("For printing, I recommend turning the backrgound white and use landscape + Tabeloid in the settings.")
 # ————————————————————————————————————————————————
 # 1) Gather inputs with Streamlit widgets instead of input()
 # ————————————————————————————————————————————————
@@ -52,7 +54,8 @@ acquisitions  = st.number_input("Acquisitions, net of cash acquired, and purchas
 debt_raised = st.number_input("Debt raised through financing",     format="%.2f")
 debt_repaid = st.number_input("Debt repaid through financing",     format="%.2f")
 
-
+avg_inv = (inventory_begin + inventory_end) / 2 if inventory_end else None
+book_value = (shareholder_equity / shares_outstanding) if shares_outstanding else None
 # ————————————————————————————————————————————————
 # 2) Compute your ratios
 # ————————————————————————————————————————————————
@@ -75,11 +78,11 @@ ratios = {
     "Debt to assets ratio":           round(total_liabilities / total_assets, 3) if total_assets else None,
     "Interest coverage ratio":        round(operating_profit / interest_expense, 2) if interest_expense else None,
     "Asset turnover(%)":              pct(revenue, total_assets),
-    "Inventory turnover(%)":          pct(((inventory_begin + inventory_end) / 2) , cogs),
+    "Inventory turnover(%)":          pct(cogs, avg_inv),
     "Receivable turnover(%)":         pct(revenue , ((receivable_begin + receivable_end) / 2)),
     "Price to earning ratio":         round (market_price / earnings_per_share, 2) if earnings_per_share else None,
     "Revenue per share ratio":        round (revenue / shares_outstanding, 2) if shares_outstanding else None,
-    "Price to book ratio":            round ((shareholder_equity / shares_outstanding) / market_price) if market_price else None,
+    "Price to book ratio":            round (market_price / book_value, 2) if book_value else None,
     
 
 }
