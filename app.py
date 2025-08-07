@@ -55,6 +55,7 @@ debt_raised = st.number_input("Debt raised through financing",     format="%.2f"
 debt_repaid = st.number_input("Debt repaid through financing",     format="%.2f")
 
 avg_inv = (inventory_begin + inventory_end) / 2 if inventory_end else None
+avg_receiv = (receivable_begin + receivable_end) / 2 
 book_value = (shareholder_equity / shares_outstanding) if shares_outstanding else None
 # ————————————————————————————————————————————————
 # 2) Compute your ratios
@@ -77,9 +78,9 @@ ratios = {
     "Debt to equity ratio":           round(total_liabilities / shareholder_equity, 3)  if shareholder_equity  else None,
     "Debt to assets ratio":           round(total_liabilities / total_assets, 3) if total_assets else None,
     "Interest coverage ratio":        round(operating_profit / interest_expense, 2) if interest_expense else None,
-    "Asset turnover(%)":              pct(revenue, total_assets),
-    "Inventory turnover(%)":          pct(cogs, avg_inv),
-    "Receivable turnover(%)":         pct(revenue , ((receivable_begin + receivable_end) / 2)),
+    "Asset turnover":                 round(revenue / total_assets, 2) if total_assets else None,
+    "Inventory turnover":             round(cogs / avg_inv, 2) if avg_inv else None,
+    "Receivable turnover":            round(revenue / avg_receiv, 2) if avg_receiv else None,
     "Price to earning ratio":         round (market_price / earnings_per_share, 2) if earnings_per_share else None,
     "Revenue per share ratio":        round (revenue / shares_outstanding, 2) if shares_outstanding else None,
     "Price to book ratio":            round (market_price / book_value, 2) if book_value else None,
@@ -115,9 +116,9 @@ categories = {
     "Debt to equity ratio":        "Solvency",
     "Debt to assets ratio":        "Solvency",
     "Interest coverage ratio":     "Solvency", 
-    "Asset turnover(%)":           "Efficiency",
-    "Inventory turnover(%)":       "Efficiency",
-    "Receivable turnover(%)":      "Efficiency",
+    "Asset turnover(times)":           "Efficiency",
+    "Inventory turnover(times)":       "Efficiency",
+    "Receivable turnover(times)":      "Efficiency",
     "Price to earning ratio":      "Valuation",
     "Revenue per share ratio":     "Valuation",
     "Price to book ratio":         "Valuation",
