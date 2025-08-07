@@ -259,15 +259,25 @@ col1.metric("Depreciation margin (%) of Gross Profit", label3)        # <-- only
 col2.checkbox("Competitive edge (≤10%)",   value=is_low_depreciation,  disabled=True)
 col2.checkbox("High depreciation cost (>40%)", value=is_high_depreciation, disabled=True)
 
-st.subheader("Per-Share Earnings")
+st.subheader("Earning per outstanding share")
 st.write("Shows consistency and upward trend = Competitive and durable ")
 
-pershare_earnings = round((net_income / shares_outstanding), 2) if shares_outstanding else None
+# 1) Compute a plain float, not a list
+pershare_earnings = (
+    net_income / shares_outstanding
+    if shares_outstanding
+    else None
+)
 
-label4 = f"${pershare_earnings:.2f} per share" if pershare_earnings is not None else "N/A"
+# 2) Format with enough precision (say 4 decimals) so you don’t lose small values
+label14 = (
+    f"${pershare_earnings:.4f} per share"
+    if pershare_earnings is not None
+    else "N/A"
+)
 
 col1, col2 = st.columns([3,1])
-col1.metric("Per-Share Earnings", label4) 
+col1.metric("Earning per outstanding share", label14) 
 
 st.markdown("---")
 
