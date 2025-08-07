@@ -6,6 +6,8 @@ st.write("Warning: Save page as PDF or else you will lose your data when you exi
 # ————————————————————————————————————————————————
 # 1) Gather inputs with Streamlit widgets instead of input()
 # ————————————————————————————————————————————————
+st.text_input("Firm's name & tag:")
+st.text_input("All amounts are expressed in:")
 
 st.header ("Statements of Income")
 revenue          = st.number_input("Net revenue",             format="%.2f")
