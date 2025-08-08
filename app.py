@@ -384,4 +384,88 @@ col1, col2 = st.columns(2)
 col1.metric("FCFE Before Debt", label1)
 col2.metric("FCFE With Debt",  label2)
 
+st.markdown("---")
+
+
+
+def dcf_model(fcf, growth_rate, discount_rate, years, terminal_growth):
+    cash_flows = []
+    for year in range(1, years+1):
+        fcf = fcf * (1 + growth_rate)
+        cash_flows.append(fcf)
+    terminal_value = cash_flows[-1] * (1 + terminal_growth) / (discount_rate - terminal_growth)
+    
+    pv_cash_flows = [cf / ((1 + discount_rate) ** (i+1)) for i, cf in enumerate(cash_flows)]
+    pv_terminal = terminal_value / ((1 + discount_rate) ** years)
+    
+    enterprise_value = sum(pv_cash_flows) + pv_terminal
+    return enterprise_value
+
+st.title("Discounted Cash Flow (DCF) Model with Peer Comparison")
+
+# --- DCF Inputs ---
+fcf = st.number_input("Starting Free Cash Flow ($M)", value=75.0)
+growth_rate = st.number_input("Annual Growth Rate (%)", value=40.0) / 100
+discount_rate = st.number_input("Discount Rate (WACC %) ", value=10.0) / 100
+years = st.number_input("Forecast Period (years)", value=5, step=1)
+terminal_growth = st.number_input("Terminal Growth Rate (%)", value=3.0) / 100
+
+# Calculate EV button
+calc_ev = st.button("Calculate Enterprise Value", key="main_calc_ev")
+
+if calc_ev:
+    ev_value = dcf_model(fcf, growth_rate, discount_rate, int(years), terminal_growth)
+    st.session_state["ev_value"] = ev_value  # store in session_state
+    st.write(f"Estimated Enterprise Value: **${ev_value:.2f} million**")
+
+# --- Peer Comparison Section ---
+st.subheader("Peer Comparison")
+
+n_peers = st.number_input("Number of Peers", min_value=1, max_value=10, value=3, step=1)
+peer_data = []
+
+for i in range(int(n_peers)):
+    st.markdown(f"### Peer {i+1}")
+    name = st.text_input(f"Peer {i+1} Name", key=f"name_{i}")
+    market_cap = st.number_input(f"Peer {i+1} Market Cap ($M)", min_value=0.0, key=f"marketcap_{i}")
+    revenue = st.number_input(f"Peer {i+1} Revenue ($M)", min_value=0.0, key=f"revenue_{i}")
+    peer_ev = st.number_input(f"Peer {i+1} Enterprise Value ($M)", min_value=0.0, key=f"ev_{i}")
+    ev_to_sales = peer_ev / revenue if revenue > 0 else None
+    ev_to_ebitda = st.number_input(f"Peer {i+1} EV/EBITDA", min_value=0.0, key=f"ev_ebitda_{i}")
+    pe_ratio = st.number_input(f"Peer {i+1} P/E Ratio", min_value=0.0, key=f"pe_{i}")
+
+    peer_data.append({
+        "Name": name,
+        "Market Cap ($M)": market_cap,
+        "Revenue ($M)": revenue,
+        "Enterprise Value ($M)": peer_ev,
+        "EV/Sales": ev_to_sales,
+        "EV/EBITDA": ev_to_ebitda,
+        "P/E": pe_ratio
+    })
+
+# Display peers if all names filled
+df_peers = pd.DataFrame(peer_data)
+if any(df_peers["Name"]):
+    st.dataframe(df_peers.style.format({
+        "Market Cap ($M)": "{:,.2f}",
+        "Revenue ($M)": "{:,.2f}",
+        "Enterprise Value ($M)": "{:,.2f}",
+        "EV/Sales": "{:.2f}",
+        "EV/EBITDA": "{:.2f}",
+        "P/E": "{:.2f}",
+    }))
+
+    # Compare with your company if EV available
+    if "ev_value" in st.session_state:
+        your_revenue = st.number_input("Your Company Revenue ($M)", min_value=0.0, key="your_revenue")
+        if your_revenue > 0:
+            your_ev_to_sales = st.session_state["ev_value"] / your_revenue
+            st.write(f"Your Company's EV/Sales (DCF-based): **{your_ev_to_sales:.2f}**")
+            avg_peer_ev_to_sales = df_peers["EV/Sales"].dropna().mean()
+            st.write(f"Average Peer EV/Sales: **{avg_peer_ev_to_sales:.2f}**")
+            if your_ev_to_sales > avg_peer_ev_to_sales:
+                st.warning("Your company appears overvalued compared to peers by EV/Sales.")
+            else:
+                st.success("Your company appears undervalued compared to peers by EV/Sales.")
 
