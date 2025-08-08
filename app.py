@@ -491,3 +491,105 @@ if any(df_peers["Name"]):
             else:
                 st.success("Your company appears undervalued compared to peers by EV/Sales.")
 
+# —————————————— DCF Inputs ——————————————
+st.subheader(" Discounted Cash Flow (DCF) Part 2")
+
+horizon = st.number_input(
+    "Forecast horizon (years)",
+    min_value=1,
+    max_value=30,
+    value=5,
+    step=1,
+    help="How many years out to project Free Cash Flow"
+)
+
+fcf0 = st.number_input(
+    "Current Free Cash Flow ($)",
+    format="%.2f",
+    help="Most recent annual Free Cash Flow (Operating CF – CapEx)"
+)
+
+growth_rate = st.number_input(
+    "Annual growth rate (%)",
+    min_value=0.0,
+    format="%.2f",
+    help="Expected % growth of FCF each year"
+)
+
+discount_rate = st.number_input(
+    "Discount rate / WACC (%)",
+    min_value=0.0,
+    format="%.2f",
+    help="Your required return to discount future cash flows"
+)
+
+terminal_gr = st.number_input(
+    "Terminal growth rate (%)",
+    min_value=0.0,
+    format="%.2f",
+    help="Perpetual growth rate after the forecast period"
+)
+
+shares_outstanding = st.number_input(
+    "Shares outstanding",
+    min_value=1,
+    format="%.0f",
+    help="Number of shares to divide equity value by"
+)
+
+# —————————————— DCF Calculation ——————————————
+# 1) Project FCF for each forecast year
+fcf = []
+for year in range(1, horizon + 1):
+    prev = fcf[-1] if fcf else fcf0
+    fcf.append(prev * (1 + growth_rate / 100))
+
+# 2) Discount factors and PV of each FCF
+discount_factors = [
+    (1 + discount_rate / 100) ** y for y in range(1, horizon + 1)
+]
+pv_fcf = [fcf[i] / discount_factors[i] for i in range(horizon)]
+
+# 3) Sum of PV of forecasted FCF
+pv_sum = sum(pv_fcf)
+
+# 4) Terminal value at end of forecast, only if discount_rate > terminal_gr
+if discount_rate > terminal_gr:
+    terminal_value = (
+        fcf[-1]
+        * (1 + terminal_gr / 100)
+        / ((discount_rate / 100) - (terminal_gr / 100))
+    )
+    pv_terminal = terminal_value / discount_factors[-1]
+else:
+    terminal_value = None
+    pv_terminal = None
+    st.warning(
+        "⚠️ Discount rate must exceed terminal growth rate to compute a valid terminal value."
+    )
+
+# 5) Enterprise value
+enterprise_value = pv_sum + (pv_terminal or 0)
+
+# 6) Intrinsic value per share
+dcf_per_share = (
+    enterprise_value / shares_outstanding
+    if shares_outstanding else None
+)
+
+# —————————————— Display Results ——————————————
+st.subheader("💡 DCF Valuation Results")
+col1, col2 = st.columns(2)
+col1.metric("NPV of Forecasted FCF", f"${pv_sum:,.0f}")
+col2.metric(
+    "PV of Terminal Value",
+    f"${pv_terminal:,.0f}" if pv_terminal is not None else "N/A"
+)
+
+st.metric("Enterprise Value", f"${enterprise_value:,.0f}")
+
+if dcf_per_share is not None:
+    st.metric("Intrinsic Value per Share", f"${dcf_per_share:,.2f}")
+else:
+    st.warning("Enter a non-zero Shares Outstanding to compute per-share value.")
+
