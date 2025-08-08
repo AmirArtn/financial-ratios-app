@@ -386,7 +386,29 @@ col2.metric("FCFE With Debt",  label2)
 
 st.markdown("---")
 
+with st.expander("🔍 What do I need for a DCF?", expanded=False):
+    st.markdown("""
+    To run a Discounted Cash Flow (DCF) analysis, we’ll need just a handful of inputs:
 
+    - **Forecast Length (years)**:  
+      How many years out do you want us to project free cash flow? (5–10 years is common.)
+    - **Starting Free Cash Flow ($)**:  
+      The actual FCF from your most recent full year (Operating CF minus CapEx).
+    - **Growth Rate (%)**:  
+      Roughly how fast you think FCF will grow each year during your forecast.
+    - **Discount Rate / WACC (%)**:  
+      Your required return (or the company’s cost of capital) to bring future cash back to today.
+    - **Terminal Growth Rate (%)**:  
+      A long-term, steady growth rate after your forecast—think inflation plus a little extra.
+
+    Once you’ve filled these in, we’ll:
+    1. Grow your cash flows year by year  
+    2. Discount each back to present value  
+    3. Sum them up, add in a terminal value,  
+    4. And finally divide by shares outstanding for an intrinsic per-share price.
+
+    
+    """)
 
 def dcf_model(fcf, growth_rate, discount_rate, years, terminal_growth):
     cash_flows = []
