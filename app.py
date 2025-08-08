@@ -386,7 +386,7 @@ col2.metric("FCFE With Debt",  label2)
 
 st.markdown("---")
 
-with st.expander("🔍 What do I need for a DCF?", expanded=False):
+with st.expander("What do I need for a DCF?", expanded=False):
     st.markdown("""
     To run a Discounted Cash Flow (DCF) analysis, we’ll need just a handful of inputs:
 
