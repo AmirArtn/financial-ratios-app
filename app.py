@@ -578,7 +578,7 @@ dcf_per_share = (
 )
 
 # —————————————— Display Results ——————————————
-st.subheader("💡 DCF Valuation Results")
+st.subheader("DCF Valuation Results")
 col1, col2 = st.columns(2)
 col1.metric("NPV of Forecasted FCF", f"${pv_sum:,.0f}")
 col2.metric(
